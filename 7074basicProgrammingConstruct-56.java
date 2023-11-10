@@ -3,7 +3,7 @@ import java.util.Scanner;
 class Bpc56{
    void leap(int l){
     if(l%4==0){
-    System.out.println("It is Bpc56 leap year");
+    System.out.println("It is a leap year");
 }
 else{
     System.out.println("It is not a leap year");
