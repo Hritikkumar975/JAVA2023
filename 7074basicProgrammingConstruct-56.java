@@ -1,3 +1,4 @@
+// Program to find givrn year is leap year or not.
 import java.util.Scanner;
 class Bpc56{
    void leap(int l){
