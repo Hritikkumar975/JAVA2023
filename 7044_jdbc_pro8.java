@@ -1,0 +1,86 @@
+import java.sql.*;
+import java.util.Scanner;
+
+class CRUD_resultSet {
+    public static void main(String[] args) {
+
+        try {
+
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/chatTest", "root", "");
+            Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+
+            // resultset that is scrollable and updateable
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM chats");
+
+            System.out.println("All rows before operations :");
+            while (resultSet.next()) {
+                System.out.println("Id = " + resultSet.getInt("id") + ", username = " + resultSet.getString("username")
+                        + ", message = " + resultSet.getString("message"));
+            }
+
+            Scanner scanner = new Scanner(System.in);
+
+            // inserting a row
+            System.out.println("Enter values for new row:");
+            System.out.print("Id: ");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Username: ");
+            String usernameValue = scanner.nextLine();
+            System.out.print("Message: ");
+            String message = scanner.nextLine();
+
+            resultSet.moveToInsertRow();
+            resultSet.updateInt("id", id);
+            resultSet.updateString("username", usernameValue);
+            resultSet.updateString("message", message);
+            resultSet.insertRow();
+
+            // updating a row
+            System.out.println("Enter values for row to update:");
+            System.out.print("Id: ");
+            int updateId = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("New message: ");
+            String newMessage = scanner.nextLine();
+
+            resultSet.beforeFirst();
+            while (resultSet.next()) {
+                if (resultSet.getInt("id") == updateId) {
+                    resultSet.updateString("message", newMessage);
+                    resultSet.updateRow();
+                    break;
+                }
+            }
+
+            // deleting a row
+            System.out.println("Enter id of row to delete:");
+            int deleteId = scanner.nextInt();
+            scanner.nextLine();
+
+            resultSet.beforeFirst();
+            while (resultSet.next()) {
+                if (resultSet.getInt("id") == deleteId) {
+                    resultSet.deleteRow();
+                    break;
+                }
+            }
+
+            scanner.close();
+
+            System.out.println("All rows after operations :");
+            resultSet.beforeFirst();
+            while (resultSet.next()) {
+                System.out.println("Id = " + resultSet.getInt("id") + ", username = " + resultSet.getString("username")
+                        + ", message = " + resultSet.getString("message"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+}
